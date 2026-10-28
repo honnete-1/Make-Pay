@@ -1,0 +1,145 @@
+"use client";
+
+import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { Check, Copy, FileX, Plus, Share2 } from "lucide-react";
+import type { Receipt } from "@/types";
+import { AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/components/app/app-chrome";
+import { LogoMark } from "@/components/brand/logo";
+import { Button } from "@/components/ui/button";
+import { DemoTag } from "@/components/ui/demo-tag";
+import { useHydrated } from "@/hooks/use-hydrated";
+import { useT, type Dictionary } from "@/i18n";
+import { formatDateTime, formatMinutes, formatRWF } from "@/lib/format";
+import { useTripStore } from "@/store/trip-store";
+import { cn } from "@/lib/utils";
+
+export function receiptText(r: Receipt, t: Dictionary) {
+  return [
+    `Mâke pay — ${t.receipt.demo} ${r.id}`,
+    `${r.originName} → ${r.destinationName}`,
+    formatDateTime(r.issuedAt),
+    `${t.receipt.distance}: ${r.distanceKm.toFixed(1)} km`,
+    `${t.fare.transportFare}: ${formatRWF(r.fare)}`,
+    `${t.fare.platformFee}: ${formatRWF(r.platformFee)}`,
+    `${t.fare.total}: ${formatRWF(r.total)}`,
+    `${t.receipt.status[r.paymentStatus]} · ${t.receipt.ref} ${r.paymentReference}`,
+    t.receipt.notReal,
+  ].join("\n");
+}
+
+export function ReceiptView() {
+  const hydrated = useHydrated();
+  const router = useRouter();
+  const t = useT();
+  const params = useParams<{ id: string }>();
+  const fresh = useSearchParams().get("new") === "1";
+  const receipt = useTripStore((s) => s.receipts.find((r) => r.id === params.id));
+  const [copied, setCopied] = useState(false);
+
+  // A fresh receipt closes the journey so the next trip starts clean.
+  useEffect(() => {
+    if (hydrated && fresh) useTripStore.getState().resetJourney();
+  }, [hydrated, fresh]);
+
+  if (!hydrated) return <LoadingScreen />;
+  if (!receipt) {
+    return (
+      <>
+        <AppHeader back="/app/history" title={t.receipt.title} />
+        <EmptyState icon={<FileX />} title={t.receipt.notFound} body={t.receipt.notFoundBody} action={<Button onClick={() => router.push("/app/history")}>{t.trips.title}</Button>} />
+      </>
+    );
+  }
+
+  const share = async () => {
+    const text = receiptText(receipt, t);
+    try {
+      if (navigator.share) await navigator.share({ title: `Mâke pay ${receipt.id}`, text });
+      else {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      /* share sheet dismissed */
+    }
+  };
+
+  const rows: [string, string][] = [
+    [t.receipt.date, formatDateTime(receipt.issuedAt)],
+    [t.receipt.from, receipt.originName],
+    [t.receipt.to, receipt.destinationName],
+    [t.receipt.distance, `${receipt.distanceKm.toFixed(1)} km${receipt.extraKm > 0 ? ` (${t.receipt.extension(receipt.extraKm.toFixed(1))})` : ""}`],
+    [t.receipt.rideTime, formatMinutes(receipt.durationSec)],
+    [t.receipt.rider, receipt.driverMsisdnMasked],
+  ];
+
+  return (
+    <>
+      <AppHeader back="/app/history" title={t.receipt.title} />
+      <PageColumn>
+        {fresh && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-4 flex items-center gap-3 rounded-2xl bg-lime px-4 py-3 text-forest" role="status">
+            <Check className="size-5 shrink-0" strokeWidth={3} />
+            <p className="text-[15px] font-semibold">{t.receipt.saved}</p>
+          </motion.div>
+        )}
+        <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative rounded-[26px] bg-white p-6 shadow-float" aria-labelledby="rcpt-h">
+          <div className="flex items-start justify-between">
+            <LogoMark className="size-10" />
+            <DemoTag>{t.receipt.demo}</DemoTag>
+          </div>
+          <h2 id="rcpt-h" className="mt-6 text-[13px] uppercase tracking-[0.14em] text-ink-soft">{t.receipt.title} {receipt.id}</h2>
+          <p className="mt-1 font-display text-5xl font-semibold tracking-tight text-forest tabular">{formatRWF(receipt.total)}</p>
+          <StatusPill status={receipt.paymentStatus} />
+
+          <dl className="mt-6 divide-y divide-stone text-[15px]">
+            {rows.map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-6 py-3">
+                <dt className="shrink-0 text-ink-soft">{k}</dt>
+                <dd className="text-right text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div aria-hidden className="relative my-6">
+            <div className="border-t-2 border-dashed border-stone-dark" />
+            <span className="absolute -left-10 -top-4 size-8 rounded-full bg-cream" />
+            <span className="absolute -right-10 -top-4 size-8 rounded-full bg-cream" />
+          </div>
+
+          <dl className="space-y-2.5 text-[15px] tabular">
+            <div className="flex justify-between"><dt className="text-ink-soft">{t.fare.transportFare}</dt><dd>{formatRWF(receipt.fare)}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-soft">{t.fare.platformFee}</dt><dd>{formatRWF(receipt.platformFee)}</dd></div>
+            <div className="flex justify-between font-semibold"><dt>{t.fare.total}</dt><dd>{formatRWF(receipt.total)}</dd></div>
+          </dl>
+          <p className="mt-6 text-[12px] leading-snug text-ink-soft">
+            {t.receipt.ref} {receipt.paymentReference}. {t.receipt.notReal}
+          </p>
+        </motion.article>
+
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <Button variant="outline" size="lg" onClick={share}>
+            {copied ? <><Copy /> {t.receipt.copied}</> : <><Share2 /> {t.receipt.share}</>}
+          </Button>
+          <Button asChild size="lg">
+            <Link href="/app"><Plus /> {t.receipt.newRide}</Link>
+          </Button>
+        </div>
+      </PageColumn>
+    </>
+  );
+}
+
+export function StatusPill({ status, className }: { status: Receipt["paymentStatus"]; className?: string }) {
+  const t = useT();
+  const map = {
+    successful: "bg-success/10 text-success",
+    cancelled: "bg-stone text-ink",
+    failed: "bg-danger/10 text-danger",
+  } as const;
+  return <span className={cn("mt-2 inline-flex rounded-full px-2.5 py-1 text-[12px] font-medium", map[status], className)}>{t.receipt.status[status]}</span>;
+}
