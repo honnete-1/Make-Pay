@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, History, WifiOff } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowLeft, Map as MapIcon, ReceiptText, UserRound, WifiOff } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { useOnline } from "@/hooks/use-online";
 import { cn } from "@/lib/utils";
@@ -32,43 +32,88 @@ export function AppHeader({
 }) {
   const router = useRouter();
   return (
-    <header className={cn("relative z-30 flex h-16 items-center gap-3 px-4 safe-top md:px-6", transparent ? "absolute inset-x-0" : "bg-cream")}>
+    <header className={cn("relative z-30 flex h-16 shrink-0 items-center gap-3 px-4 safe-top md:px-6", transparent ? "absolute inset-x-0" : "bg-cream")}>
       {back ? (
         <button
           type="button"
           onClick={() => (back === true ? router.back() : router.push(back))}
-          className="grid size-11 place-items-center rounded-full bg-white text-forest shadow-float"
+          className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-forest shadow-float"
           aria-label="Go back"
         >
           <ArrowLeft className="size-5" />
         </button>
-      ) : (
+      ) : !title ? (
         <Link href="/app" aria-label="Mâke pay home" className="rounded-xl">
           <LogoMark className="size-10" />
         </Link>
+      ) : null}
+      {title && (
+        <h1 className={cn("min-w-0 truncate font-display text-lg font-semibold text-forest", transparent && "rounded-full bg-white/90 px-4 py-2 shadow-float backdrop-blur")}>
+          {title}
+        </h1>
       )}
-      {title && <h1 className={cn("font-display text-lg font-semibold text-forest", transparent && "rounded-full bg-white/90 px-4 py-2 shadow-float backdrop-blur")}>{title}</h1>}
-      <div className="ml-auto flex items-center gap-2">
-        {right ?? (
-          <Link href="/app/history" className="grid size-11 place-items-center rounded-full bg-white text-forest shadow-float" aria-label="Trip history">
-            <History className="size-5" />
-          </Link>
-        )}
-      </div>
+      <div className="ml-auto flex shrink-0 items-center gap-2">{right ?? <span className="size-11" aria-hidden />}</div>
     </header>
   );
 }
 
 export function PageColumn({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-xl px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] md:px-6 md:pb-32", className)}>{children}</div>;
+  return <div className={cn("mx-auto w-full max-w-xl flex-1 px-5 pb-6 md:px-6", className)}>{children}</div>;
 }
 
-/** Sticky bottom action bar for primary CTAs on mobile. */
+/** Primary CTA pinned above the tab bar (or screen bottom when tabs are hidden). */
 export function ActionBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-forest/8 bg-cream/90 px-5 pt-3 backdrop-blur-xl safe-bottom md:static md:mx-auto md:mt-8 md:max-w-xl md:border-0 md:bg-transparent md:px-6 md:backdrop-blur-none">
+    <div className="sticky bottom-0 z-20 mt-auto border-t border-forest/8 bg-cream/95 px-5 pb-4 pt-3 backdrop-blur-xl">
       {children}
     </div>
+  );
+}
+
+const TABS = [
+  { href: "/app", label: "Ride", Icon: MapIcon },
+  { href: "/app/history", label: "Trips", Icon: ReceiptText },
+  { href: "/app/profile", label: "Profile", Icon: UserRound },
+] as const;
+
+/** Ride · Trips · Profile. Hidden on full-screen flows (map, journey, payment, install). */
+export function TabBar() {
+  const path = usePathname();
+  const visible =
+    path === "/app" ||
+    path.startsWith("/app/history") ||
+    path.startsWith("/app/profile") ||
+    path.startsWith("/app/receipt");
+  if (!visible) return null;
+
+  return (
+    <nav aria-label="Main" className="z-30 shrink-0 border-t border-forest/10 bg-cream safe-bottom">
+      <ul className="grid grid-cols-3">
+        {TABS.map(({ href, label, Icon }) => {
+          const active =
+            href === "/app"
+              ? path === "/app"
+              : path.startsWith(href) || (href === "/app/history" && path.startsWith("/app/receipt"));
+          return (
+            <li key={href}>
+              <Link
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "flex h-16 flex-col items-center justify-center gap-1 text-[12px] font-medium transition-colors",
+                  active ? "text-forest" : "text-ink-soft hover:text-forest",
+                )}
+              >
+                <span className={cn("grid h-7 w-12 place-items-center rounded-full transition-colors", active && "bg-lime")}>
+                  <Icon className="size-5" strokeWidth={active ? 2.4 : 1.8} aria-hidden />
+                </span>
+                {label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }
 

@@ -10,7 +10,7 @@ export function PhoneShell({ children, className }: { children: React.ReactNode;
   return (
     <div
       className={cn(
-        "mx-auto flex min-h-dvh w-full max-w-md flex-col bg-cream",
+        "mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-cream",
         standalone && "max-w-none",
         className,
       )}

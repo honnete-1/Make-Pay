@@ -46,9 +46,8 @@ export default function AppHome() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex flex-col">
-        <AppHeader />
-        <div className="mx-auto w-full max-w-xl flex-1 px-5 pb-40">
+      <AppHeader />
+      <div className="mx-auto w-full max-w-xl flex-1 px-5 pb-6">
           {activeTrip && (
             <Link href="/app/journey" className="mb-6 flex items-center gap-3 rounded-2xl bg-forest p-4 text-cream">
               <span className="relative grid size-10 place-items-center rounded-full bg-lime text-forest">
@@ -176,20 +175,17 @@ export default function AppHome() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-        <div className="md:sticky md:bottom-0">
-          <ActionBar>
-            <Button
-              size="xl"
-              block
-              disabled={!destination}
-              onClick={() => destination && router.push(`/app/route?from=${originId}&to=${destination.id}`)}
-            >
-              {destination ? <>Check fare to {destination.name} <ArrowRight /></> : "Choose a destination"}
-            </Button>
-          </ActionBar>
-        </div>
       </div>
+      <ActionBar>
+        <Button
+          size="xl"
+          block
+          disabled={!destination}
+          onClick={() => destination && router.push(`/app/route?from=${originId}&to=${destination.id}`)}
+        >
+          {destination ? <>Check fare to {destination.name} <ArrowRight /></> : "Choose a destination"}
+        </Button>
+      </ActionBar>
 
       <PlacePickerDialog
         open={originOpen}

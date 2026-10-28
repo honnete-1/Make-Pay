@@ -22,7 +22,7 @@ export default function HistoryPage() {
 
   return (
     <>
-      <AppHeader back="/app" title="Trip history" right={<span />} />
+      <AppHeader title="Trips" right={<span />} />
       <PageColumn>
         {receipts.length === 0 ? (
           <EmptyState
