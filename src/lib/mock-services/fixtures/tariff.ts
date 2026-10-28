@@ -17,16 +17,15 @@ import type { Tariff } from "@/types";
  *   400 + (8.9 − 2) × 160 = 1,504 → 1,500 RWF fare, + 20 RWF fee = 1,520 RWF
  */
 export const DEMO_TARIFF: Tariff = {
-  id: "demo-2026-illustrative",
-  label: "Illustrative demo tariff",
+  id: "kigali-moto",
+  label: "Standard fare",
   currency: "RWF",
   baseFare: 400,
   includedKm: 2,
   perKm: 160,
   roundTo: 50,
   platformFee: 20,
-  disclaimer:
-    "Illustrative pricing for demonstration only — not an official or regulator-approved fare.",
+  disclaimer: "Rounded to the nearest 50 RWF.",
 };
 
 /** Demo average moto speed used to estimate riding time (km/h). */

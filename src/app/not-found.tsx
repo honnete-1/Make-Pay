@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { TryMakePayButton } from "@/components/pwa/try-make-pay-button";
 
 export default function NotFound() {
   return (
@@ -11,7 +14,7 @@ export default function NotFound() {
         <p className="mt-3 text-lg text-ink-soft">This road doesn’t lead anywhere — yet.</p>
         <div className="mt-8 flex justify-center gap-3">
           <Button asChild variant="outline"><Link href="/">Home</Link></Button>
-          <Button asChild><Link href="/app">Open the demo</Link></Button>
+          <TryMakePayButton>Download Mâke pay</TryMakePayButton>
         </div>
       </div>
     </main>

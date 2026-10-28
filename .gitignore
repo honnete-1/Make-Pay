@@ -6,3 +6,7 @@ out
 next-env.d.ts
 .vercel
 public/maplibre-gl-worker.mjs
+data/
+public/sw*
+public/swe-worker*
+.env*

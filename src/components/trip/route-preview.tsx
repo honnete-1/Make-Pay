@@ -10,11 +10,9 @@ import { BottomSheet } from "./bottom-sheet";
 import { RouteMap } from "./route-map";
 import { FareBreakdown } from "./fare-breakdown";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { services } from "@/lib/services";
 import { formatRWF } from "@/lib/format";
 import { useTripStore } from "@/store/trip-store";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { useHydrated } from "@/hooks/use-hydrated";
 
 export function RoutePreview() {
@@ -26,7 +24,6 @@ export function RoutePreview() {
   const [route, setRoute] = useState<RouteSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const desktop = useMediaQuery("(min-width: 768px)");
   const hydrated = useHydrated();
 
   const origin = services.routing.getPlace(from);
@@ -58,10 +55,7 @@ export function RoutePreview() {
   }, [hydrated, origin, destination, load]);
 
   const quote = route ? services.fare.quote(route.distanceKm) : null;
-  const padding = useMemo(
-    () => (desktop ? { top: 80, bottom: 80, left: 470, right: 80 } : { top: 110, bottom: 400, left: 30, right: 30 }),
-    [desktop],
-  );
+  const padding = useMemo(() => ({ top: 110, bottom: 400, left: 30, right: 30 }), []);
 
   if (!hydrated) return <LoadingScreen label="Loading route…" />;
 
@@ -97,13 +91,10 @@ export function RoutePreview() {
             {loading ? "Calculating route…" : <>Start journey <ArrowRight /></>}
           </Button>
         }
-        defaultExpanded={desktop}
+        defaultExpanded={false}
         peek={
           <div className="pb-3">
-            <div className="flex items-center justify-between">
-              <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">Recommended route</p>
-              <DemoTag>Demo route</DemoTag>
-            </div>
+            <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">Recommended route</p>
             <p className="mt-1.5 font-display text-[1.6rem] font-semibold leading-tight tracking-tight text-forest md:text-[1.75rem]">
               {origin.name} <span className="text-ink-soft">→</span> {destination.name}
             </p>
@@ -115,10 +106,7 @@ export function RoutePreview() {
               </div>
             ) : (
               <motion.div initial={false} animate={{ opacity: loading ? 0.5 : 1 }} className="mt-3 rounded-[1.5rem] bg-forest p-5 text-cream">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13px] text-cream/70">Illustrative estimated fare</p>
-                  <DemoTag tone="dark">Demo tariff</DemoTag>
-                </div>
+                <p className="text-[13px] text-cream/70">Estimated fare</p>
                 <p className="mt-1 font-display text-[2.75rem] font-semibold leading-tight tracking-tight text-lime tabular" aria-live="polite">
                   {quote ? formatRWF(quote.fare) : <span className="inline-block h-11 w-40 animate-pulse rounded-xl bg-white/10" />}
                 </p>

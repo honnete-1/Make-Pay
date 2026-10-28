@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { MEDIA } from "@/lib/media";
+import { useInstallDialog } from "@/components/pwa/install-context";
 
 const SLIDES = [
   { id: "fair", headline: "Same destination.\nDifferent prices.", eyebrow: "A clearer way around Kigali", media: MEDIA.heroPrices },
@@ -17,6 +17,7 @@ export function HeroCarousel() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reduceMotion = useReducedMotion();
+  const { openInstall } = useInstallDialog();
   const go = useCallback((n: number) => setIndex((n + SLIDES.length) % SLIDES.length), []);
   useEffect(() => {
     if (paused || reduceMotion) return;
@@ -32,7 +33,7 @@ export function HeroCarousel() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-  const slide = SLIDES[index];
+  const slide = SLIDES[index] ?? SLIDES[0];
   return (
     <section aria-label="Introduction to Mâke pay" aria-roledescription="carousel"
       className="relative isolate min-h-[580px] h-[88svh] max-h-[980px] overflow-hidden bg-forest-900 pt-20 text-white"
@@ -54,9 +55,13 @@ export function HeroCarousel() {
             <h1 className="max-w-[980px] whitespace-pre-line font-display text-[clamp(3.3rem,8vw,8rem)] font-semibold leading-[.97] tracking-[-.045em] text-white text-balance">{slide.headline}</h1>
           </motion.div>
         </AnimatePresence>
-        <Link href="/app" className="pointer-events-auto mt-9 inline-flex w-fit items-center gap-3 rounded-full bg-[#D9F068] px-7 py-4 text-sm font-semibold text-[#123D35] transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-          Check your fare <ArrowUpRight className="size-4" />
-        </Link>
+        <button
+          type="button"
+          onClick={openInstall}
+          className="pointer-events-auto mt-9 inline-flex w-fit items-center gap-3 rounded-full bg-[#D9F068] px-7 py-4 text-sm font-semibold text-[#123D35] transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >
+          Download Mâke pay <ArrowUpRight className="size-4" />
+        </button>
       </div>
       <div className="absolute bottom-0 left-0 right-0 z-20 mx-auto flex max-w-[1400px] items-center justify-between gap-5 px-6 pb-8 md:px-12 md:pb-10">
         <div className="flex items-center gap-3" aria-label="Carousel pages">

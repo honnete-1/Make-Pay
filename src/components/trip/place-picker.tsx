@@ -128,7 +128,7 @@ export function PlacePickerDialog({
                       }}
                     />
                   ))}
-                  {results?.length === 0 && <p className="px-4 py-8 text-center text-ink-soft">No demo places match “{q}”.</p>}
+                  {results?.length === 0 && <p className="px-4 py-8 text-center text-ink-soft">No places match “{q}”.</p>}
                 </div>
               </motion.div>
             </Dialog.Content>

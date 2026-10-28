@@ -8,11 +8,10 @@ import { liveServices } from "./live";
 /**
  * Service registry. Components import `services` and never a mock directly.
  *
- * NEXT_PUBLIC_USE_MOCKS=false switches to the HTTP adapters in ./live.ts,
- * which are typed stubs today. Secrets (MoMo API keys, routing keys) must
- * live server-side — call them from Route Handlers, never from the browser.
+ * Default is live (same-origin /api). Set NEXT_PUBLIC_USE_MOCKS=true to force
+ * the in-browser mocks. Secrets must stay server-side in Route Handlers.
  */
-const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
+const useMocks = process.env.NEXT_PUBLIC_USE_MOCKS === "true";
 
 const mockServices: Services = {
   mode: "mock",
@@ -26,3 +25,4 @@ export const services: Services = useMocks ? mockServices : liveServices;
 export const IS_DEMO = services.mode === "mock";
 
 export type { Services } from "./contracts";
+export { fetchReceipts, postReceipt, deleteReceipts, postTrip, patchTrip } from "./live";

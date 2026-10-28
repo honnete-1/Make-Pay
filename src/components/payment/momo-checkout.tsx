@@ -7,11 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AnimatePresence, motion } from "motion/react";
 import { AlertCircle, Ban, Loader2, Lock, RotateCcw, ShieldCheck, Smartphone } from "lucide-react";
-import type { PaymentOutcome } from "@/types";
 import { ActionBar, AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/components/app/app-chrome";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useMomoPayment } from "./use-momo-payment";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { msisdnSchema, formatMsisdn, maskMsisdn, normalizeMsisdn } from "@/lib/phone";
@@ -26,18 +24,11 @@ const schema = z.object({ msisdn: msisdnSchema });
 type FormIn = z.input<typeof schema>;
 type FormOut = z.output<typeof schema>;
 
-const OUTCOMES: { value: PaymentOutcome; label: string }[] = [
-  { value: "success", label: "Success" },
-  { value: "cancelled", label: "Cancelled" },
-  { value: "failed", label: "Failed" },
-];
-
 export function MomoCheckout() {
   const hydrated = useHydrated();
   const router = useRouter();
   const { summary, addReceipt } = useTripStore();
   const { status, result, error, pay, cancel, reset } = useMomoPayment();
-  const [outcome, setOutcome] = useState<PaymentOutcome>("success");
   const [msisdn, setMsisdn] = useState("");
 
   const {
@@ -73,14 +64,14 @@ export function MomoCheckout() {
 
   const onSubmit = (data: FormOut) => {
     setMsisdn(data.msisdn);
-    void pay({ tripId: summary.tripId, driverMsisdn: data.msisdn, fare: q.fare, platformFee: q.platformFee, total: q.total, demoOutcome: outcome === "success" ? undefined : outcome });
+    void pay({ tripId: summary.tripId, driverMsisdn: data.msisdn, fare: q.fare, platformFee: q.platformFee, total: q.total });
   };
 
   const field = register("msisdn");
 
   return (
     <>
-      <AppHeader back={busy ? undefined : "/app/journey/complete"} title="MoMo checkout" right={<DemoTag>Demonstration</DemoTag>} />
+      <AppHeader back={busy ? undefined : "/app/journey/complete"} title="MoMo checkout" right={<span />} />
       <PageColumn>
         <AnimatePresence mode="wait">
           {status === "idle" && (
@@ -125,27 +116,8 @@ export function MomoCheckout() {
 
               <div className="mt-4 flex gap-3 rounded-2xl bg-forest/6 p-4 text-[13px] text-forest">
                 <Lock className="mt-0.5 size-4 shrink-0" />
-                <p><span className="font-semibold">Mâke pay never asks for your MoMo PIN.</span> In a live version you would approve the request on your own phone’s MoMo prompt.</p>
+                <p><span className="font-semibold">Mâke pay never asks for your MoMo PIN.</span> Approve the request on your phone’s MoMo prompt.</p>
               </div>
-
-              <fieldset className="mt-6 rounded-2xl border border-dashed border-forest/25 p-4">
-                <legend className="px-2 text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">Demo outcome</legend>
-                <div role="radiogroup" aria-label="Simulated payment outcome" className="grid grid-cols-3 gap-1 rounded-full bg-stone p-1">
-                  {OUTCOMES.map((o) => (
-                    <button
-                      key={o.value}
-                      type="button"
-                      role="radio"
-                      aria-checked={outcome === o.value}
-                      onClick={() => setOutcome(o.value)}
-                      className={cn("h-10 rounded-full text-[14px] font-medium transition-colors", outcome === o.value ? "bg-white text-forest shadow-sm" : "text-ink-soft")}
-                    >
-                      {o.label}
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-2 text-[12px] text-ink-soft">Choose what the simulated network returns. With Success selected, test numbers ending in 0000 fail and 1111 cancel. No money moves in any case.</p>
-              </fieldset>
             </motion.form>
           )}
 
@@ -163,8 +135,8 @@ export function MomoCheckout() {
               </h2>
               <p className="mt-2 max-w-sm text-[15px] text-ink-soft">
                 {status === "initiating"
-                  ? `Requesting ${formatRWF(q.total)} to ${maskMsisdn(msisdn)} (simulated).`
-                  : "In a live payment, a MoMo prompt would appear on your phone to approve. This demo resolves automatically."}
+                  ? `Requesting ${formatRWF(q.total)} to ${maskMsisdn(msisdn)}.`
+                  : "Approve the request on your phone."}
               </p>
               <div className="mt-8 h-1.5 w-56 overflow-hidden rounded-full bg-stone">
                 <motion.div
@@ -189,7 +161,7 @@ export function MomoCheckout() {
                 <motion.path d="M24 41 l11 11 l22 -24" fill="none" stroke="#123D35" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.15 }} />
               </motion.svg>
               <h2 className="mt-6 font-display text-3xl font-semibold tracking-tight text-forest">Payment successful</h2>
-              <p className="mt-2 text-ink-soft">{formatRWF(q.total)} · Demonstration only — no real money moved.</p>
+              <p className="mt-2 text-ink-soft">{formatRWF(q.total)} paid to your rider.</p>
               <p className="mt-6 flex items-center gap-2 text-[14px] text-ink-soft"><Loader2 className="size-4 animate-spin" /> Preparing your receipt…</p>
             </motion.div>
           )}
@@ -219,7 +191,7 @@ export function MomoCheckout() {
               <Button
                 size="xl"
                 className="flex-1"
-                onClick={() => pay({ tripId: summary.tripId, driverMsisdn: msisdn, fare: q.fare, platformFee: q.platformFee, total: q.total, demoOutcome: outcome === "success" ? undefined : outcome })}
+                onClick={() => pay({ tripId: summary.tripId, driverMsisdn: msisdn, fare: q.fare, platformFee: q.platformFee, total: q.total })}
               >
                 <RotateCcw /> Try again
               </Button>

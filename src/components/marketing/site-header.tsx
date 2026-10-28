@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
+import { TryMakePayButton } from "@/components/pwa/try-make-pay-button";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -60,11 +60,9 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Button asChild variant={solid ? "primary" : "lime"} size="sm" className="hidden sm:inline-flex">
-            <Link href="/app">
-              Try Mâke pay <ArrowUpRight />
-            </Link>
-          </Button>
+          <TryMakePayButton variant={solid ? "primary" : "lime"} size="sm" className="hidden sm:inline-flex">
+            Try Mâke pay <ArrowUpRight />
+          </TryMakePayButton>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -97,9 +95,9 @@ export function SiteHeader() {
                 </motion.li>
               ))}
             </ul>
-            <Button asChild size="lg" block className="mt-8">
-              <Link href="/app">Try Mâke pay <ArrowUpRight /></Link>
-            </Button>
+            <TryMakePayButton size="lg" block className="mt-8">
+              Try Mâke pay <ArrowUpRight />
+            </TryMakePayButton>
           </motion.nav>
         )}
       </AnimatePresence>

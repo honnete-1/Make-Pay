@@ -240,7 +240,7 @@ function pinEl(kind: "origin" | "destination") {
 
 function riderEl() {
   const d = document.createElement("div");
-  d.setAttribute("aria-label", "Simulated rider position");
+  d.setAttribute("aria-label", "Rider position");
   d.style.width = "22px";
   d.style.height = "22px";
   d.innerHTML = `<span style="position:absolute;left:-14px;top:-14px;width:50px;height:50px;border-radius:999px;background:#D9F068;opacity:.45" class="animate-pulse-ring"></span><span style="position:absolute;inset:0;border-radius:999px;background:#123D35;border:4px solid #D9F068;box-shadow:0 2px 10px rgba(0,0,0,.3)"></span>`;

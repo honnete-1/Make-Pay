@@ -46,7 +46,7 @@ function seed(originId: string, destinationId: string, issuedAt: string, msisdn:
     platformFee: q.platformFee,
     total: q.total,
     driverMsisdnMasked: maskMsisdn(msisdn),
-    paymentReference: `DEMO-${stableCode(issuedAt, 8)}`,
+    paymentReference: `TX-${stableCode(issuedAt, 8)}`,
     paymentStatus: "successful",
     tariffLabel: DEMO_TARIFF.label,
     issuedAt,

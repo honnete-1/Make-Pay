@@ -85,7 +85,6 @@ export function ScreenFare() {
         <Row k={`${(QUOTE.distanceKm - 2).toFixed(1)} km × 160`} v={formatRWF(QUOTE.distanceCharge)} />
         <Row k="Rounded to nearest 50" v={formatRWF(QUOTE.fare)} strong />
       </div>
-      <p className="mt-4 text-[10px] leading-snug text-cream/50">Illustrative demo tariff — not an official fare.</p>
       <div className="mt-auto mb-6 grid h-12 place-items-center rounded-full bg-lime text-[14px] font-semibold text-forest">Start journey</div>
     </ScreenShell>
   );
@@ -100,7 +99,7 @@ export function ScreenTracking({ progress = 0.56 }: { progress?: number }) {
       <div className="relative h-[55%]">
         <SchematicMap path={ROUTE.path} travelled={travelled} position={point} originId="cbd" destinationId="kimironko" fitToPath showLabels={false} animateDraw={false} />
         <div className="absolute left-3 top-11 flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-medium text-forest shadow-float">
-          <Signal className="size-3" /> Simulated GPS · Strong
+          <Signal className="size-3" /> GPS · Strong
         </div>
       </div>
       <div className="flex-1 bg-cream px-5 pt-4">
@@ -124,7 +123,7 @@ export function ScreenPaid() {
         <Check className="size-9 text-forest" strokeWidth={3} />
       </div>
       <p className="mt-5 font-display text-[26px] leading-tight text-forest">Payment confirmed</p>
-      <p className="mt-1 text-[12px] text-ink-soft">Demo · no real money moved</p>
+      <p className="mt-1 text-[12px] text-ink-soft">Paid with MoMo</p>
       <div className="mt-6 w-full space-y-2.5 rounded-2xl bg-white p-4 text-left text-[12px] shadow-float">
         <Row k="Fare" v={formatRWF(QUOTE.fare)} dark />
         <Row k="Platform fee" v={formatRWF(QUOTE.platformFee)} dark />
@@ -141,7 +140,7 @@ export function ScreenPaid() {
 export function ScreenMomo() {
   return (
     <ScreenShell className="px-5">
-      <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-ink-soft">MoMo checkout · demo</p>
+      <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-ink-soft">MoMo checkout</p>
       <p className="font-display text-[24px] leading-tight text-forest">Pay your rider</p>
       <div className="mt-4 rounded-2xl border border-forest bg-white px-4 py-3">
         <p className="text-[10px] text-ink-soft">Rider&apos;s MoMo number</p>

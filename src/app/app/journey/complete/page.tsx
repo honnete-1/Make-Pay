@@ -7,7 +7,6 @@ import { ActionBar, AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/c
 import { FareBreakdown } from "@/components/trip/fare-breakdown";
 import { SchematicMap } from "@/components/trip/schematic-map";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { services } from "@/lib/services";
 import { formatMinutes, formatRWF } from "@/lib/format";
@@ -36,7 +35,7 @@ export default function CompletedJourneyPage() {
 
   return (
     <>
-      <AppHeader title="Journey complete" />
+      <AppHeader back="/app" title="Journey complete" />
       <PageColumn>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-[var(--radius-card)] bg-forest text-cream">
           <div className="relative h-40">
@@ -53,7 +52,7 @@ export default function CompletedJourneyPage() {
                 <p className="mt-1 font-display text-2xl font-semibold tabular">{summary.travelledKm.toFixed(1)} km</p>
               </div>
               <div className="rounded-2xl bg-white/8 p-4">
-                <p className="flex items-center gap-1.5 text-[12px] text-cream/60"><Clock className="size-3.5" /> Ride time (simulated)</p>
+                <p className="flex items-center gap-1.5 text-[12px] text-cream/60"><Clock className="size-3.5" /> Ride time</p>
                 <p className="mt-1 font-display text-2xl font-semibold tabular">{formatMinutes(summary.elapsedSec)}</p>
               </div>
             </div>
@@ -73,10 +72,7 @@ export default function CompletedJourneyPage() {
         )}
 
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-4 rounded-[var(--radius-card)] bg-white p-6" aria-labelledby="fare-h">
-          <div className="flex items-center justify-between">
-            <h2 id="fare-h" className="font-display text-xl font-semibold text-forest">Fare summary</h2>
-            <DemoTag>{tariff.label}</DemoTag>
-          </div>
+          <h2 id="fare-h" className="font-display text-xl font-semibold text-forest">Fare summary</h2>
           <p className="mt-4 font-display text-5xl font-semibold tracking-tight text-forest tabular">{formatRWF(summary.finalQuote.fare)}</p>
           <p className="text-[13px] text-ink-soft">Rider fare for {summary.finalQuote.distanceKm.toFixed(1)} km</p>
           <div className="mt-5 border-t border-stone pt-5">
