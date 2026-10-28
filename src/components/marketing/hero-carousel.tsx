@@ -33,7 +33,7 @@ export function HeroCarousel() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-  const slide = SLIDES[index];
+  const slide = SLIDES[index] ?? SLIDES[0];
   return (
     <section aria-label="Introduction to Mâke pay" aria-roledescription="carousel"
       className="relative isolate min-h-[580px] h-[88svh] max-h-[980px] overflow-hidden bg-forest-900 pt-20 text-white"
