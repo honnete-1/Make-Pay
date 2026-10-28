@@ -7,7 +7,6 @@ import { ChevronRight, ReceiptText, Trash2 } from "lucide-react";
 import { AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/components/app/app-chrome";
 import { StatusPill } from "@/components/payment/receipt-view";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { formatDateTime, formatRWF } from "@/lib/format";
 import { useTripStore } from "@/store/trip-store";
@@ -29,18 +28,15 @@ export default function HistoryPage() {
           <EmptyState
             icon={<ReceiptText />}
             title="No trips yet"
-            body="Completed demo journeys and their receipts will appear here."
+            body="Completed journeys and their receipts will appear here."
             action={<Button asChild><Link href="/app">Plan a journey</Link></Button>}
           />
         ) : (
           <>
             <div className="rounded-[var(--radius-card)] bg-forest p-6 text-cream">
-              <div className="flex items-center justify-between">
-                <p className="text-[13px] text-cream/70">{receipts.length} trips on this device</p>
-                <DemoTag tone="dark">Demo data</DemoTag>
-              </div>
+              <p className="text-[13px] text-cream/70">{receipts.length} trips on this device</p>
               <p className="mt-2 font-display text-4xl font-semibold tracking-tight text-lime tabular">{formatRWF(total)}</p>
-              <p className="text-[13px] text-cream/70">Total paid (simulated)</p>
+              <p className="text-[13px] text-cream/70">Total paid</p>
             </div>
 
             <ul className="mt-5 space-y-2">
@@ -65,12 +61,12 @@ export default function HistoryPage() {
             <div className="mt-8 flex justify-center">
               {confirm ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-[14px] text-ink-soft">Delete all demo trips?</span>
+                  <span className="text-[14px] text-ink-soft">Delete all trips?</span>
                   <Button size="sm" variant="danger" onClick={() => { clearHistory(); setConfirm(false); }}>Delete</Button>
                   <Button size="sm" variant="ghost" onClick={() => setConfirm(false)}>Keep</Button>
                 </div>
               ) : (
-                <Button variant="ghost" size="sm" onClick={() => setConfirm(true)}><Trash2 /> Clear demo history</Button>
+                <Button variant="ghost" size="sm" onClick={() => setConfirm(true)}><Trash2 /> Clear history</Button>
               )}
             </div>
           </>

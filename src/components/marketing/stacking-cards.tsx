@@ -7,7 +7,6 @@ import { SchematicMap } from "@/components/trip/schematic-map";
 import { PhoneFrame } from "./phone-frame";
 import { ScreenMomo } from "./screens";
 import { Eyebrow, Reveal } from "./reveal";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { computeRoute } from "@/lib/mock-services/routing.mock";
 import { quoteFare } from "@/lib/mock-services/fare.mock";
 import { pointAlong } from "@/lib/geo";
@@ -132,10 +131,7 @@ function EstimateVisual() {
           </div>
           <p className="mt-5 font-display text-6xl font-semibold tracking-tight text-lime tabular">{formatRWF(Q.fare, false)}</p>
           <p className="text-sm text-cream/70">RWF estimated · ~{R.durationMin} min</p>
-          <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-[12px] text-cream/60">
-            <span>400 base + {(R.distanceKm - 2).toFixed(1)} km × 160</span>
-            <DemoTag tone="dark">Demo tariff</DemoTag>
-          </div>
+          <p className="mt-5 border-t border-white/10 pt-4 text-[12px] text-cream/60">400 base + {(R.distanceKm - 2).toFixed(1)} km × 160</p>
         </div>
       </div>
     </div>
@@ -162,7 +158,7 @@ function TrackVisual() {
         ))}
       </div>
       <div className="absolute left-6 top-6 flex items-center gap-2 rounded-full bg-forest-900/70 px-3 py-1.5 text-[12px] text-cream backdrop-blur md:left-10 md:top-10">
-        <Signal className="size-3.5 text-lime" /> Simulated GPS · strong
+        <Signal className="size-3.5 text-lime" /> GPS · strong
       </div>
     </div>
   );
@@ -174,7 +170,7 @@ function PayVisual() {
       {/* Mobile: compact payment card */}
       <div className="flex h-full items-center justify-center p-6 md:hidden">
         <div className="w-full max-w-[340px] rounded-3xl bg-white p-5 shadow-float">
-          <p className="text-[11px] uppercase tracking-[0.12em] text-ink-soft">MoMo checkout · demo</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-ink-soft">MoMo checkout</p>
           <div className="mt-3 rounded-2xl border border-forest/20 px-4 py-2.5">
             <p className="text-[10px] text-ink-soft">Rider&apos;s MoMo number</p>
             <p className="text-[15px] tracking-wide text-ink tabular">078 812 3456</p>

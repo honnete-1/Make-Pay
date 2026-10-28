@@ -4,17 +4,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dialog } from "radix-ui";
-import { Clock, Flag, Gauge, Loader2, MapPinPlus, Navigation, Signal, SignalLow, WifiOff, X } from "lucide-react";
+import { Clock, Flag, Loader2, MapPinPlus, Navigation, Signal, SignalLow, WifiOff, X } from "lucide-react";
 import type { GpsSignal, Place } from "@/types";
 import { AppHeader, EmptyState, LoadingScreen } from "@/components/app/app-chrome";
 import { BottomSheet } from "./bottom-sheet";
 import { RouteMap } from "./route-map";
 import { PlaceRow } from "./place-picker";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useOnline } from "@/hooks/use-online";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTripSimulation } from "@/hooks/use-trip-simulation";
 import { services } from "@/lib/services";
 import { finalDestinationId } from "@/lib/mock-services/trip-simulator";
@@ -24,9 +22,9 @@ import { cn } from "@/lib/utils";
 import { useTripStore } from "@/store/trip-store";
 
 const SIGNAL: Record<GpsSignal, { label: string; cls: string; Icon: typeof Signal }> = {
-  strong: { label: "Simulated GPS · Strong", cls: "bg-white text-forest", Icon: Signal },
-  weak: { label: "Simulated GPS · Weak signal", cls: "bg-warning text-white", Icon: SignalLow },
-  searching: { label: "Simulated GPS · Locating…", cls: "bg-white text-ink-soft", Icon: Loader2 },
+  strong: { label: "GPS · Strong", cls: "bg-white text-forest", Icon: Signal },
+  weak: { label: "GPS · Weak signal", cls: "bg-warning text-white", Icon: SignalLow },
+  searching: { label: "GPS · Locating…", cls: "bg-white text-ink-soft", Icon: Loader2 },
   offline: { label: "Offline · estimating on device", cls: "bg-ink text-cream", Icon: WifiOff },
 };
 
@@ -34,8 +32,7 @@ export function ActiveJourney() {
   const hydrated = useHydrated();
   const router = useRouter();
   const online = useOnline();
-  const desktop = useMediaQuery("(min-width: 768px)");
-  const { trip, endTrip, extend, demoSpeed, setDemoSpeed } = useTripStore();
+  const { trip, endTrip, extend } = useTripStore();
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [extendOpen, setExtendOpen] = useState(false);
 
@@ -47,10 +44,7 @@ export function ActiveJourney() {
 
   const progress = trip ? trip.travelledKm / trip.totalDistanceKm : 0;
   const along = useMemo(() => (trip ? pointAlong(trip.path, progress) : null), [trip, progress]);
-  const padding = useMemo(
-    () => (desktop ? { top: 80, bottom: 80, left: 470, right: 80 } : { top: 110, bottom: 430, left: 30, right: 30 }),
-    [desktop],
-  );
+  const padding = useMemo(() => ({ top: 110, bottom: 430, left: 30, right: 30 }), []);
 
   if (!hydrated) return <LoadingScreen label="Resuming journey…" />;
   if (!trip || trip.status === "completed") {
@@ -89,7 +83,7 @@ export function ActiveJourney() {
         />
       </div>
       <AppHeader
-        back="/app"
+        back={`/app/route?from=${trip.route.originId}&to=${destId}`}
         transparent
         right={
           <span role="status" className={cn("flex items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium shadow-float", S.cls)}>
@@ -147,7 +141,6 @@ export function ActiveJourney() {
                   <span className="ml-1.5 text-lg font-medium text-ink-soft">RWF</span>
                 </p>
               </div>
-              <DemoTag className="mb-1.5">Illustrative</DemoTag>
             </div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-stone" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} aria-label="Journey progress">
               <div className="h-full rounded-full bg-forest transition-[width] duration-300 ease-linear" style={{ width: `${progress * 100}%` }} />
@@ -184,18 +177,6 @@ export function ActiveJourney() {
             </p>
           )}
         </div>
-
-        <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-white p-3 pl-4">
-          <span className="text-[14px] text-ink">Demo speed</span>
-          <div role="radiogroup" aria-label="Demo speed" className="flex rounded-full bg-stone p-1">
-            {([1, 2] as const).map((v) => (
-              <button key={v} type="button" role="radio" aria-checked={demoSpeed === v} onClick={() => setDemoSpeed(v)} className={cn("flex h-9 items-center gap-1 rounded-full px-4 text-[14px] font-medium", demoSpeed === v ? "bg-white text-forest shadow-sm" : "text-ink-soft")}>
-                <Gauge className="size-3.5" /> {v}×
-              </button>
-            ))}
-          </div>
-        </div>
-        <p className="mt-2 text-[12px] text-ink-soft">Time is compressed for the demo: 1 second ≈ {30 * demoSpeed} seconds of riding. No real GPS is used.</p>
 
       </BottomSheet>
 
@@ -262,8 +243,8 @@ function ExtendDialog({
             <Dialog.Close className="grid size-10 shrink-0 place-items-center rounded-full bg-stone text-forest" aria-label="Close"><X className="size-4" /></Dialog.Close>
           </div>
           <div className="mt-4 space-y-0.5">
-            {!options && <div className="flex items-center gap-2 px-3 py-6 text-ink-soft"><Loader2 className="size-4 animate-spin" /> Finding nearby demo places…</div>}
-            {options?.length === 0 && <p className="px-3 py-6 text-ink-soft">No nearby demo places to extend to.</p>}
+            {!options && <div className="flex items-center gap-2 px-3 py-6 text-ink-soft"><Loader2 className="size-4 animate-spin" /> Finding nearby places…</div>}
+            {options?.length === 0 && <p className="px-3 py-6 text-ink-soft">No nearby places to extend to.</p>}
             {options?.map((p) => (
               <PlaceRow
                 key={p.id}

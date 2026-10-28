@@ -2,10 +2,13 @@
   "name": "make-pay",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=20.9" },
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "concurrently -p none \"serwist build --watch --config serwist.config.js\" \"next dev\"",
+    "dev:next": "next dev",
+    "build": "next build && serwist build --config serwist.config.js",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "postinstall": "node scripts/copy-map-worker.mjs",
@@ -13,6 +16,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^6.0.2",
+    "@serwist/next": "^9.5.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "geist": "^1.8.2",
@@ -24,15 +28,19 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.91.0",
+    "serwist": "^9.5.13",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7",
     "zustand": "^5.0.16"
   },
   "devDependencies": {
+    "@serwist/cli": "^9.5.13",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "concurrently": "^10.0.6",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3"
   }

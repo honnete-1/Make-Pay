@@ -22,9 +22,9 @@ export function resolveDemoOutcome(msisdn: string, chosen?: PaymentOutcome): Pay
 }
 
 const MESSAGES: Record<PaymentOutcome, string> = {
-  success: "Payment approved. The rider has been notified (simulated).",
-  cancelled: "The payment prompt was declined on the phone. No money moved.",
-  failed: "The mobile-money network did not respond in time. No money moved.",
+  success: "Payment approved. The rider has been notified.",
+  cancelled: "The payment was declined on the phone.",
+  failed: "The mobile-money network did not respond in time.",
 };
 
 let attempt = 0;
@@ -40,7 +40,7 @@ export const mockPaymentService: PaymentService = {
     const status = outcome === "success" ? "successful" : outcome;
     onStatus(status);
     const result: PaymentResult = {
-      reference: `DEMO-${stableCode(`${request.tripId}:${attempt}:${outcome}`, 8)}`,
+      reference: `TX-${stableCode(`${request.tripId}:${attempt}:${outcome}`, 8)}`,
       status,
       message: MESSAGES[outcome],
       completedAt: new Date().toISOString(),

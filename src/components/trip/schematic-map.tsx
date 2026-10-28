@@ -42,7 +42,7 @@ export function SchematicMap({
   showLabels = true,
   animateDraw = true,
   className,
-  ariaLabel = "Schematic map of the demonstration route",
+  ariaLabel = "Map of the route",
   inset,
 }: SchematicMapProps) {
   const uid = useId().replace(/:/g, "");

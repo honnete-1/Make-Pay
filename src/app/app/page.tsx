@@ -7,9 +7,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Clock, Crosshair, Loader2, Navigation, Search, X } from "lucide-react";
 import { AppHeader, ActionBar, LoadingScreen } from "@/components/app/app-chrome";
 import { PlacePickerDialog, PlaceRow, usePlaceSearch } from "@/components/trip/place-picker";
-import { SchematicMap } from "@/components/trip/schematic-map";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { services } from "@/lib/services";
 import { SAMPLE_JOURNEYS } from "@/lib/mock-services/fixtures/kigali-graph";
@@ -42,15 +40,15 @@ export default function AppHome() {
     setLocating(false);
   };
 
-  if (!hydrated) return <LoadingScreen label="Preparing the demo…" />;
+  if (!hydrated) return <LoadingScreen label="Getting ready…" />;
 
   const activeTrip = trip && trip.status !== "completed";
 
   return (
-    <div className="flex flex-1 flex-col md:grid md:grid-cols-[minmax(420px,520px)_1fr]">
+    <div className="flex flex-1 flex-col">
       <div className="flex flex-col">
         <AppHeader />
-        <div className="mx-auto w-full max-w-xl flex-1 px-5 pb-40 md:px-8">
+        <div className="mx-auto w-full max-w-xl flex-1 px-5 pb-40">
           {activeTrip && (
             <Link href="/app/journey" className="mb-6 flex items-center gap-3 rounded-2xl bg-forest p-4 text-cream">
               <span className="relative grid size-10 place-items-center rounded-full bg-lime text-forest">
@@ -75,7 +73,7 @@ export default function AppHome() {
                 <span className="block text-[12px] text-ink-soft">Starting from</span>
                 <span className="block truncate text-[16px] font-medium text-ink">{origin?.name} · <span className="font-normal text-ink-soft">{origin?.area}</span></span>
               </button>
-              <button type="button" onClick={locate} className="grid size-10 shrink-0 place-items-center rounded-full bg-stone text-forest" aria-label="Use current location (simulated)">
+              <button type="button" onClick={locate} className="grid size-10 shrink-0 place-items-center rounded-full bg-stone text-forest" aria-label="Use current location">
                 {locating ? <Loader2 className="size-4 animate-spin" /> : <Crosshair className="size-4" />}
               </button>
             </div>
@@ -116,11 +114,11 @@ export default function AppHome() {
           <AnimatePresence mode="wait">
             {searching ? (
               <motion.div key="results" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-5">
-                <p className="px-3 pb-2 text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">{query ? "Results" : "Demo destinations"}</p>
+                <p className="px-3 pb-2 text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">{query ? "Results" : "Places"}</p>
                 {error && <p className="px-3 py-4 text-danger">{error}</p>}
                 {results?.length === 0 && !loading && (
                   <div className="rounded-2xl bg-stone/60 px-5 py-8 text-center">
-                    <p className="font-medium text-ink">No demo destinations match “{query}”.</p>
+                    <p className="font-medium text-ink">No places match “{query}”.</p>
                     <p className="mt-1 text-[14px] text-ink-soft">Try Remera, Kimironko, Kacyiru or Airport.</p>
                   </div>
                 )}
@@ -158,10 +156,7 @@ export default function AppHome() {
                   </div>
                 </section>
                 <section className="mt-8" aria-labelledby="sample-h">
-                  <div className="flex items-center justify-between px-1">
-                    <h2 id="sample-h" className="text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">Sample journeys</h2>
-                    <DemoTag>Demo</DemoTag>
-                  </div>
+                  <h2 id="sample-h" className="px-1 text-[12px] font-medium uppercase tracking-[0.12em] text-ink-soft">Suggested journeys</h2>
                   <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
                     {SAMPLE_JOURNEYS.map((j) => (
                       <button
@@ -193,16 +188,6 @@ export default function AppHome() {
               {destination ? <>Check fare to {destination.name} <ArrowRight /></> : "Choose a destination"}
             </Button>
           </ActionBar>
-        </div>
-      </div>
-
-      {/* Desktop city context */}
-      <div className="relative hidden overflow-hidden md:block">
-        <div className="sticky top-0 h-[calc(100dvh-32px)]">
-          <SchematicMap originId={originId} destinationId={destinationId ?? undefined} ariaLabel="Overview of demo destinations in Kigali" />
-          <div className="absolute bottom-6 left-6 rounded-2xl bg-white/90 px-4 py-3 text-[13px] text-ink-soft shadow-float backdrop-blur">
-            Demonstration network · {services.routing.getPlace(originId)?.name} highlighted as your start
-          </div>
         </div>
       </div>
 

@@ -6,10 +6,9 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Check, Copy, FileX, History, Plus, Share2 } from "lucide-react";
 import type { Receipt } from "@/types";
-import { AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/components/app/app-chrome";
+import { ActionBar, AppHeader, EmptyState, LoadingScreen, PageColumn } from "@/components/app/app-chrome";
 import { LogoMark } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { formatDateTime, formatMinutes, formatRWF } from "@/lib/format";
 import { useTripStore } from "@/store/trip-store";
@@ -17,15 +16,14 @@ import { cn } from "@/lib/utils";
 
 export function receiptText(r: Receipt) {
   return [
-    `Mâke pay — DEMONSTRATION RECEIPT ${r.id}`,
+    `Mâke pay receipt ${r.id}`,
     `${r.originName} → ${r.destinationName}`,
     formatDateTime(r.issuedAt),
     `Distance: ${r.distanceKm.toFixed(1)} km`,
     `Fare: ${formatRWF(r.fare)}`,
     `Platform fee: ${formatRWF(r.platformFee)}`,
     `Total: ${formatRWF(r.total)}`,
-    `Status: ${r.paymentStatus} (simulated) · Ref ${r.paymentReference}`,
-    "Illustrative pricing. No real payment was made.",
+    `Status: ${r.paymentStatus} · Ref ${r.paymentReference}`,
   ].join("\n");
 }
 
@@ -47,7 +45,7 @@ export function ReceiptView() {
     return (
       <>
         <AppHeader back="/app/history" title="Receipt" />
-        <EmptyState icon={<FileX />} title="Receipt not found" body="This demo receipt isn’t stored on this device. Receipts live in your browser only." action={<Button onClick={() => router.push("/app/history")}>View history</Button>} />
+        <EmptyState icon={<FileX />} title="Receipt not found" body="This receipt isn’t stored on this device." action={<Button onClick={() => router.push("/app/history")}>View history</Button>} />
       </>
     );
   }
@@ -87,10 +85,7 @@ export function ReceiptView() {
           </motion.div>
         )}
         <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative rounded-[var(--radius-card)] bg-white p-6 shadow-float md:p-8" aria-labelledby="rcpt-h">
-          <div className="flex items-start justify-between">
-            <LogoMark className="size-10" />
-            <DemoTag>Demonstration receipt</DemoTag>
-          </div>
+          <LogoMark className="size-10" />
           <h2 id="rcpt-h" className="mt-6 text-[13px] uppercase tracking-[0.14em] text-ink-soft">Receipt {receipt.id}</h2>
           <p className="mt-1 font-display text-5xl font-semibold tracking-tight text-forest tabular">{formatRWF(receipt.total)}</p>
           <StatusPill status={receipt.paymentStatus} />
@@ -116,7 +111,7 @@ export function ReceiptView() {
             <div className="flex justify-between font-semibold"><dt>Total</dt><dd>{formatRWF(receipt.total)}</dd></div>
           </dl>
           <p className="mt-6 text-[12px] leading-snug text-ink-soft">
-            Payment ref {receipt.paymentReference}. Illustrative pricing; this receipt does not represent a real transaction.
+            Payment ref {receipt.paymentReference}.
           </p>
         </motion.article>
 
@@ -128,10 +123,12 @@ export function ReceiptView() {
             <Link href="/app/history"><History /> History</Link>
           </Button>
         </div>
-        <Button asChild size="xl" block className="mt-3">
+      </PageColumn>
+      <ActionBar>
+        <Button asChild size="xl" block>
           <Link href="/app"><Plus /> New journey</Link>
         </Button>
-      </PageColumn>
+      </ActionBar>
     </>
   );
 }
@@ -142,6 +139,6 @@ export function StatusPill({ status, className }: { status: Receipt["paymentStat
     cancelled: "bg-stone text-ink",
     failed: "bg-danger/10 text-danger",
   } as const;
-  const label = { successful: "Paid · simulated", cancelled: "Cancelled · simulated", failed: "Failed · simulated" }[status];
+  const label = { successful: "Paid", cancelled: "Cancelled", failed: "Failed" }[status];
   return <span className={cn("mt-2 inline-flex rounded-full px-2.5 py-1 text-[12px] font-medium", map[status], className)}>{label}</span>;
 }

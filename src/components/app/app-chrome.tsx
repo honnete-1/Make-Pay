@@ -2,27 +2,19 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, FlaskConical, History, WifiOff } from "lucide-react";
+import { ArrowLeft, History, WifiOff } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { useOnline } from "@/hooks/use-online";
 import { cn } from "@/lib/utils";
 
-/** Persistent, honest reminder that this is a simulation. */
+/** Shown only when the device is offline. */
 export function DemoBanner() {
   const online = useOnline();
+  if (online) return null;
   return (
-    <div role="status" className={cn("relative z-40 flex items-center justify-center gap-2 px-4 py-1.5 text-center text-[12px] font-medium", online ? "bg-forest text-cream/90" : "bg-warning text-white")}>
-      {online ? (
-        <>
-          <FlaskConical aria-hidden className="size-3.5 text-lime" />
-          Demo mode — routes, GPS, fares and payments are simulated
-        </>
-      ) : (
-        <>
-          <WifiOff aria-hidden className="size-3.5" />
-          You’re offline — the demo keeps working with cached data
-        </>
-      )}
+    <div role="status" className="relative z-40 flex items-center justify-center gap-2 bg-warning px-4 py-1.5 text-center text-[12px] font-medium text-white">
+      <WifiOff aria-hidden className="size-3.5" />
+      You’re offline. Trips saved on this device still open.
     </div>
   );
 }
@@ -40,7 +32,7 @@ export function AppHeader({
 }) {
   const router = useRouter();
   return (
-    <header className={cn("relative z-30 flex h-16 items-center gap-3 px-4 md:px-6", transparent ? "absolute inset-x-0" : "bg-cream")}>
+    <header className={cn("relative z-30 flex h-16 items-center gap-3 px-4 safe-top md:px-6", transparent ? "absolute inset-x-0" : "bg-cream")}>
       {back ? (
         <button
           type="button"
@@ -51,7 +43,7 @@ export function AppHeader({
           <ArrowLeft className="size-5" />
         </button>
       ) : (
-        <Link href="/" aria-label="Mâke pay website" className="rounded-xl">
+        <Link href="/app" aria-label="Mâke pay home" className="rounded-xl">
           <LogoMark className="size-10" />
         </Link>
       )}
@@ -68,7 +60,7 @@ export function AppHeader({
 }
 
 export function PageColumn({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-xl px-5 pb-32 md:px-6", className)}>{children}</div>;
+  return <div className={cn("mx-auto w-full max-w-xl px-5 pb-[calc(8rem+env(safe-area-inset-bottom))] md:px-6 md:pb-32", className)}>{children}</div>;
 }
 
 /** Sticky bottom action bar for primary CTAs on mobile. */

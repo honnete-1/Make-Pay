@@ -1,21 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/brand/logo";
+import { TryMakePayButton } from "@/components/pwa/try-make-pay-button";
 import { Eyebrow, Reveal } from "./reveal";
 
 const FAQS = [
   {
     q: "Is Mâke pay available today?",
-    a: "Not yet. This is an interactive product demonstration. Routes, GPS tracking, fares and payments are simulated in your browser using demonstration data — no real money moves and no location is read.",
+    a: "Yes. Download Mâke pay to your phone, choose a destination in Kigali, and see the route and fare before you ride. You pay the rider with MTN MoMo when the journey ends.",
   },
   {
     q: "How is the fare estimated?",
-    a: "In this demo, the fare is calculated from the route distance using an illustrative tariff: 400 RWF covers the first 2 km, then 160 RWF per additional kilometre, rounded to the nearest 50 RWF. It is not an official or regulator-approved fare; a production version would use the approved schedule.",
+    a: "The fare is calculated from the route distance: 400 RWF covers the first 2 km, then 160 RWF per additional kilometre, rounded to the nearest 50 RWF.",
   },
   {
     q: "Will Mâke pay ever ask for my MoMo PIN?",
@@ -23,7 +22,7 @@ const FAQS = [
   },
   {
     q: "What is the 20 RWF platform fee?",
-    a: "It is a proposed flat fee per completed trip that would fund the service. It is always shown on its own line, separate from the rider’s fare, before you confirm.",
+    a: "A flat 20 RWF fee on each completed trip. It is always shown on its own line, separate from the rider’s fare, before you confirm.",
   },
   {
     q: "What if I change destination during the ride?",
@@ -87,12 +86,10 @@ export function FinalCta() {
           </h2>
         </Reveal>
         <Reveal delay={0.1} className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center">
-          <Button asChild variant="lime" size="xl">
-            <Link href="/app">
-              Try the App <ArrowUpRight />
-            </Link>
-          </Button>
-          <p className="max-w-xs text-[15px] text-cream/70">Interactive demo — simulated routes, GPS and payments. No sign-up.</p>
+          <TryMakePayButton variant="lime" size="xl">
+            Download the app <ArrowUpRight />
+          </TryMakePayButton>
+          <p className="max-w-xs text-[15px] text-cream/70">Get the phone app — not a website tab. No sign-up.</p>
         </Reveal>
       </div>
     </section>
@@ -108,7 +105,7 @@ export function SiteFooter() {
           <p className="mt-4 max-w-sm text-[15px] text-cream/65">Know your route. Know your fare. Pay with confidence.</p>
         </div>
         <div className="text-[13px] text-cream/50 md:text-right">
-          <p>Product prototype for Kigali, Rwanda. All fares shown are illustrative.</p>
+          <p>Kigali, Rwanda.</p>
           <p className="mt-1">Map data © OpenStreetMap contributors (in-app map). © 2026 Mâke pay.</p>
         </div>
       </div>

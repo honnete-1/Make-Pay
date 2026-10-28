@@ -3,13 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView, useReducedMotion } from "motion/react";
 import { Check, ShieldCheck } from "lucide-react";
-import { DemoTag } from "@/components/ui/demo-tag";
 import { Eyebrow, Reveal } from "./reveal";
 import { formatRWF } from "@/lib/format";
 
 const LINES = [
   { label: "Rider fare", sub: "Downtown → Kimironko · 8.9 km", value: 1500 },
-  { label: "Proposed platform fee", sub: "Flat, per completed trip", value: 20 },
+  { label: "Platform fee", sub: "Flat, per completed trip", value: 20 },
 ];
 const TOTAL = 1520;
 
@@ -41,7 +40,7 @@ export function PaymentTransparency() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-soft">
-              The rider’s fare and Mâke pay’s proposed platform fee are never blended. You see both before you confirm, and both
+              The rider’s fare and Mâke pay’s platform fee are never blended. You see both before you confirm, and both
               appear on your receipt.
             </p>
           </Reveal>
@@ -65,10 +64,7 @@ export function PaymentTransparency() {
             transition={{ type: "spring", stiffness: 90, damping: 18 }}
             className="relative mx-auto max-w-[480px] rounded-[2rem] bg-white p-7 shadow-float md:p-10"
           >
-            <div className="flex items-center justify-between">
-              <p className="font-display text-lg font-semibold text-forest">Payment breakdown</p>
-              <DemoTag>Illustrative scenario</DemoTag>
-            </div>
+            <p className="font-display text-lg font-semibold text-forest">Payment breakdown</p>
             <div className="mt-8 space-y-6">
               {LINES.map((l, i) => (
                 <motion.div

@@ -38,7 +38,7 @@ function shortestPath(from: string, to: string): { nodes: string[]; km: number }
       }
     }
   }
-  if (dist[to] === Infinity) throw new Error(`No demo route between ${from} and ${to}`);
+  if (dist[to] === Infinity) throw new Error(`No route between ${from} and ${to}`);
   const nodes = [to];
   while (nodes[0] !== from) nodes.unshift(prev[nodes[0]!]!);
   return { nodes, km: dist[to]! };

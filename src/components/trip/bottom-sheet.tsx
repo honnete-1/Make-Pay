@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { motion, type PanInfo } from "motion/react";
 import { ChevronUp } from "lucide-react";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
 /**
- * Mobile: a draggable bottom sheet — `peek` and `footer` are always visible,
+ * Phone-app bottom sheet — `peek` and `footer` are always visible,
  * `children` expand/collapse by drag or tap.
- * Desktop (md+): a floating panel on the left of the map.
  */
 export function BottomSheet({
   children,
@@ -26,28 +24,8 @@ export function BottomSheet({
   defaultExpanded?: boolean;
   label?: string;
 }) {
-  const desktop = useMediaQuery("(min-width: 768px)");
+  // Passenger product is phone-app UI only — never the desktop website side panel.
   const [expanded, setExpanded] = useState(defaultExpanded);
-
-  if (desktop) {
-    return (
-      <motion.aside
-        aria-label={label}
-        initial={{ opacity: 0, x: -24 }}
-        animate={{ opacity: 1, x: 0 }}
-        className={cn(
-          "absolute bottom-6 left-6 top-20 z-20 flex w-[420px] flex-col overflow-hidden rounded-[var(--radius-sheet)] bg-cream shadow-float",
-          className,
-        )}
-      >
-        <div className="no-scrollbar flex-1 overflow-y-auto p-7 pb-4">
-          {peek}
-          {children}
-        </div>
-        {footer && <div className="border-t border-forest/8 px-7 py-4">{footer}</div>}
-      </motion.aside>
-    );
-  }
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.y > 50 || info.velocity.y > 500) setExpanded(false);
